@@ -1,0 +1,39 @@
+from google.cloud import texttospeech
+
+# তোমার শায়ারি
+text = """
+দিনের শেষে আলো যখন নিভে আসে চুপিসারে,
+পুরোনো দিনের কথাগুলো মনে পড়ে বারে বারে।
+তুই আছিস পাশে তাই তো জীবন এতটা সহজ,
+এই বন্ধুত্ব যেন হৃদয়ের এক চিরন্তন খোঁজ।
+"""
+
+# ক্লায়েন্ট তৈরি
+client = texttospeech.TextToSpeechClient()
+
+# টেক্সট ইনপুট সেট
+synthesis_input = texttospeech.SynthesisInput(text=text)
+
+# ভয়েস কনফিগারেশন
+voice = texttospeech.VoiceSelectionParams(
+    language_code="bn-IN",  # বাংলা (ভারত)
+    name="bn-IN-Wavenet-A",  # Wavenet ভয়েস
+    ssml_gender=texttospeech.SsmlVoiceGender.FEMALE
+)
+
+# অডিও কনফিগারেশন
+audio_config = texttospeech.AudioConfig(
+    audio_encoding=texttospeech.AudioEncoding.MP3
+)
+
+# টেক্সট থেকে স্পিচ তৈরি
+response = client.synthesize_speech(
+    input=synthesis_input,
+    voice=voice,
+    audio_config=audio_config
+)
+
+# MP3 ফাইলে সংরক্ষণ
+with open("shayari.mp3", "wb") as out:
+    out.write(response.audio_content)
+    print("MP3 ফাইল তৈরি হয়েছে: shayari.mp3")
